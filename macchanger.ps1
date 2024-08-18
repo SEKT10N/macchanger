@@ -60,15 +60,6 @@ function macchanger {
 		Write-Host "Restarting the network adapter..."
 		Restart-NetAdapter -Name $Interface -Confirm:$false
 		Start-Sleep -Seconds 2
-		
-		# Verify the new MAC address
-		$UpdatedMAC = (Get-NetAdapter -Name $Interface).MacAddress
-		if ($UpdatedMAC -eq $NewMAC) {
-			Write-Host "MAC address changed successfully to $mac"
-		} else {
-			Write-ErrorAndExit "Failed to change MAC address"
-		}
-
 	}
 
 	function Revert-MACAddress {
@@ -222,8 +213,6 @@ function macchanger {
 		} else {
 			Write-ErrorAndExit "Internet connectivity failed"
 		}
-
-		Write-Host "IP address change completed successfully."
 	}
 	
 	function Restore-IP {
@@ -239,7 +228,6 @@ function macchanger {
 		# Clear ARP cache
 		netsh interface ip delete arpcache | Out-Null
 
-		Write-Host "Reverted $Interface to DHCP configuration"
 	}
 
 	Clear-Host
@@ -259,23 +247,29 @@ function macchanger {
 		Write-Host "Changing the MAC Address of the interface $Interface..."
 		$NewMAC = Generate-RandomMAC
 		Set-MACAddress -Interface $Interface -NewMAC $(($NewMAC -replace "-", ""))
+		
+		# Verify the new MAC address
+		$UpdatedMAC = (Get-NetAdapter -Name $Interface).MacAddress
+		if ($UpdatedMAC -eq $NewMAC) {
+			Write-Host "MAC address changed successfully to $NewMAC"
+		} else {
+			Write-ErrorAndExit "Failed to change MAC address"
+		}
 	}
-
 	elseif ($CHOICE.trim() -eq 2) {
 		Write-Host "Restoring the MAC Address of the interface $Interface..."
 		Revert-MACAddress -Interface $Interface	
 	}
-	
 	elseif ($CHOICE.trim() -eq 3) {
 		Write-Host "Changing the IP Address of the interface $Interface..."
 		Change-IP
+		Write-Host "IP address change completed successfully."
 	}
-	
 	elseif ($CHOICE.trim() -eq 4) {
 		Write-Host "Resetting the IP Address of the interface $Interface..."
 		Restore-IP
+		Write-Host "Reverted $Interface to DHCP configuration"
 	}
-	
 	elseif ($CHOICE.trim() -eq 5) {
 		Write-Host "Interface: $Interface"
 		Write-Host "Current IP Address: $((Get-NetIPAddress -InterfaceAlias $interface -AddressFamily IPv4).IPAddress)" -ForegroundColor "Blue"
@@ -283,14 +277,24 @@ function macchanger {
 		Pause
 		macchanger
 	}
-	
 	elseif ($CHOICE.trim() -eq 6) {
 		return
 	}
-
 	else {
 		macchanger
 	}	
 }
 
-macchanger
+# Check if running as admin
+function Test-Admin {
+    $currentUser = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
+    return $currentUser.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+}
+
+if (-not (Test-Admin)) {
+    Write-Host "Not running as administrator! Rerun the script with elevated privileges." -ForegroundColor Red
+    exit
+}
+else {
+	macchanger
+}
