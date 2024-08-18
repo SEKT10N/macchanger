@@ -1,8 +1,9 @@
 $ErrorActionPreference="SilentlyContinue"
 
-# $Interface = (Get-NetIPConfiguration | Where-Object { $_.InterfaceAlias -match 'wi[-\s]?fi' }).InterfaceAlias
-Get-NetAdapter | Select-Object "Name" | foreach { $_.Name}
-$Interface = Read-Host "`nEnter Your Connection Interface Name from above list"
+Clear-Host
+
+$Interface = Get-NetAdapter | Where-Object { $_.Status -eq "Up" -and $_.HardwareInterface -eq $true } | ForEach-Object { $_.Name }
+#$Interface = Read-Host "Enter Your Connection Interface Name"  ## Uncomment this lines if above doesn't get the correct interface name
 $CurrentIP = (Get-NetIPAddress -InterfaceAlias $Interface -AddressFamily IPv4).IPAddress
 
 function macchanger {
