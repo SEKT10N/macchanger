@@ -10,7 +10,7 @@ There are many other scripts that do that then how this one differs from them?  
 
 - (TGUI); English: It's simple and easy to use
 
-- It's dynamic so it will get all the info by itself, user only has to select the interface
+- It's dynamic so it will get all the info by itself
 
 
 ## Installation
