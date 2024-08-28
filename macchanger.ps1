@@ -3,7 +3,7 @@ $ErrorActionPreference="SilentlyContinue"
 Clear-Host
 
 $Interface = Get-NetAdapter | Where-Object { $_.Status -eq "Up" -and $_.HardwareInterface -eq $true } | ForEach-Object { $_.Name }
-#$Interface = Read-Host "Enter Your Connection Interface Name"  ## Uncomment this line if above doesn't get the correct interface name
+# $Interface = Read-Host "Enter Your Connection Interface Name"  ## Uncomment this line if above doesn't get the correct interface name
 $CurrentIP = (Get-NetIPAddress -InterfaceAlias $Interface -AddressFamily IPv4).IPAddress
 
 function macchanger {
