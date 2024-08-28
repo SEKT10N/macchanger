@@ -235,7 +235,7 @@ function macchanger {
 	Write-Host " 1: Set random MAC Address"
 	Write-Host " 2: Restore original MAC Address"
 	Write-Host " 3: Change IP Address"
-	Write-Host " 4: Restore IP Address"
+	Write-Host " 4: Restore IP Address/Configuration"
 	Write-Host " 5: Show current MAC & IP Address"
 	Write-Host " 6: Exit"
 	
@@ -266,7 +266,7 @@ function macchanger {
 		Write-Host "IP address change completed successfully."
 	}
 	elseif ($CHOICE.trim() -eq 4) {
-		Write-Host "Resetting the IP Address of the interface $Interface..."
+		Write-Host "Resetting the IP Configuration of the interface $Interface..."
 		Restore-IP
 		Write-Host "Reverted $Interface to DHCP configuration"
 	}
