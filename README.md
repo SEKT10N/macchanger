@@ -8,7 +8,7 @@ There are many other scripts that do that then how this one differs from them?  
 
 ## Features
 
-- (TGUI); English: It's simple and easy to use
+- It's simple and easy to use (TGUI)
 
 - It's dynamic so it will get all the info by itself
 
